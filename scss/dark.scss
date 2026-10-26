@@ -1,0 +1,108 @@
+@use "sass:color";
+
+$oscuro-fondo: #0b0f19;
+$oscuro-superficie: #111827;
+$oscuro-acento: #38bdf8;
+$oscuro-texto: #f1f5f9;
+$oscuro-texto-sec: #94a3b8;
+$oscuro-borde: #1e293b;
+
+// Función personalizada con función nativa color.scale
+@function brillo-oscuro($color, $porcentaje) {
+  @return color.scale($color, $lightness: $porcentaje);
+}
+
+// Mixin para cajas en modo oscuro
+@mixin caja-oscura($bg: $oscuro-superficie) {
+  background-color: $bg;
+  border-color: $oscuro-borde;
+  color: $oscuro-texto;
+  box-shadow: 0 10px 30px color.change(#000000, $alpha: 0.45);
+}
+
+body {
+  background-color: $oscuro-fondo;
+  color: $oscuro-texto;
+}
+
+.color-principal {
+  color: $oscuro-acento !important;
+}
+
+.menu-navegacion {
+  @include caja-oscura(color.change($oscuro-superficie, $alpha: 0.9));
+
+  .nav-link {
+    color: $oscuro-texto;
+
+    &:hover {
+      color: $oscuro-acento;
+    }
+  }
+}
+
+.btn-conmutador-tema {
+  background-color: brillo-oscuro($oscuro-superficie, 10%);
+  color: $oscuro-acento;
+  border-color: $oscuro-acento;
+}
+
+.badge-principal {
+  background-color: color.change($oscuro-acento, $alpha: 0.15);
+  color: $oscuro-acento;
+  border-color: color.change($oscuro-acento, $alpha: 0.4);
+}
+
+.planeta-central {
+  background: radial-gradient(circle, $oscuro-superficie 0%, brillo-oscuro($oscuro-fondo, 5%) 100%);
+  border-color: color.change($oscuro-acento, $alpha: 0.4);
+  box-shadow: 0 0 45px color.change($oscuro-acento, $alpha: 0.2);
+}
+
+.anillo-orbita {
+  border-color: color.change($oscuro-acento, $alpha: 0.35);
+}
+
+.satelite {
+  @include caja-oscura;
+  color: $oscuro-acento;
+  border-color: color.change($oscuro-acento, $alpha: 0.4);
+}
+
+.tarjeta-plan,
+.caja-tecnologia,
+.caja-formulario,
+.pie-pagina {
+  @include caja-oscura;
+}
+
+.tarjeta-plan {
+  .precio-plan {
+    color: $oscuro-acento;
+  }
+
+  .lista-ventajas li {
+    border-bottom-color: $oscuro-borde;
+  }
+}
+
+.caja-estadistica {
+  background-color: brillo-oscuro($oscuro-superficie, 6%);
+  border-color: $oscuro-borde;
+}
+
+.input-personalizado {
+  background-color: $oscuro-fondo;
+  border-color: $oscuro-borde;
+  color: $oscuro-texto;
+
+  &::placeholder {
+    color: $oscuro-texto-sec;
+  }
+
+  &:focus {
+    background-color: $oscuro-fondo;
+    color: $oscuro-texto;
+    border-color: $oscuro-acento;
+  }
+}

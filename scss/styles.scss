@@ -1,0 +1,300 @@
+@use "sass:color";
+@use "sass:math";
+
+
+$color-principal: #2563eb;
+$color-secundario: #0ea5e9;
+$color-fondo: #f8fafc;
+$color-superficie: #ffffff;
+$color-texto: #0f172a;
+$color-texto-sec: #64748b;
+$color-borde: #e2e8f0;
+$radio-base: 16px;
+$tamano-orbita: 380px;
+
+
+
+
+@function px-a-rem($px, $base: 16px) {
+  @return math.div($px, $base) * 1rem;
+}
+
+
+@function ajustar-tono($color, $porcentaje) {
+  @return color.scale($color, $lightness: $porcentaje);
+}
+
+
+@function color-transparente($color, $alfa) {
+  @return color.change($color, $alpha: $alfa);
+}
+
+
+
+
+@mixin flex-centro($direccion: column) {
+  display: flex;
+  flex-direction: $direccion;
+  justify-content: center;
+  align-items: center;
+}
+
+
+@mixin tarjeta-superficie($bg: $color-superficie, $borde: $color-borde, $efecto-hover: true) {
+  background-color: $bg;
+  border: 1px solid $borde;
+  border-radius: $radio-base;
+  box-shadow: 0 10px 25px -5px color-transparente($color-texto, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+
+  @if $efecto-hover {
+    &:hover {
+      transform: translateY(-5px);
+      border-color: ajustar-tono($color-principal, 25%);
+      box-shadow: 0 18px 35px -5px color-transparente($color-principal, 0.16);
+    }
+  }
+}
+
+
+@mixin posicion-orbital($indice, $total: 6, $radio: 190px) {
+  $angulo: math.div(360deg, $total) * ($indice - 1) - 90deg;
+  $x: math.cos($angulo) * $radio;
+  $y: math.sin($angulo) * $radio;
+
+  top: calc(50% + #{$y});
+  left: calc(50% + #{$x});
+  transform: translate(-50%, -50%);
+}
+
+
+
+body {
+  background-color: $color-fondo;
+  color: $color-texto;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.color-principal {
+  color: $color-principal !important;
+}
+
+
+.header-flotante {
+  position: sticky;
+  top: px-a-rem(16px);
+  z-index: 1030;
+}
+
+.menu-navegacion {
+  @include tarjeta-superficie(color-transparente($color-superficie, 0.9), $color-borde, false);
+  backdrop-filter: blur(10px);
+  border-radius: px-a-rem(50px);
+
+  .nav-link {
+    color: $color-texto;
+    font-weight: 600;
+    padding: px-a-rem(8px) px-a-rem(16px);
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $color-principal;
+    }
+  }
+}
+
+
+.btn-principal {
+  background-color: $color-principal;
+  color: #ffffff;
+  border: none;
+  border-radius: px-a-rem(50px);
+  padding: px-a-rem(8px) px-a-rem(22px);
+  font-weight: 600;
+  transition: background-color 0.25s ease, transform 0.2s ease;
+
+  &:hover {
+    background-color: ajustar-tono($color-principal, -18%);
+    color: #ffffff;
+    transform: scale(1.03);
+  }
+}
+
+.btn-conmutador-tema {
+  background-color: ajustar-tono($color-principal, 90%);
+  color: ajustar-tono($color-principal, -15%);
+  border: 1px solid ajustar-tono($color-principal, 65%);
+  border-radius: px-a-rem(50px);
+  padding: px-a-rem(6px) px-a-rem(16px);
+  font-size: px-a-rem(14px);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background-color: ajustar-tono($color-principal, 80%);
+  }
+}
+
+.badge-principal {
+  background-color: color-transparente($color-principal, 0.1);
+  color: $color-principal;
+  border: 1px solid color-transparente($color-principal, 0.3);
+  border-radius: px-a-rem(50px);
+  padding: px-a-rem(6px) px-a-rem(14px);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+
+.contenedor-orbita {
+  position: relative;
+  width: $tamano-orbita;
+  height: $tamano-orbita;
+  margin: px-a-rem(45px) auto;
+  @include flex-centro;
+
+  @media (max-width: 576px) {
+    width: 290px;
+    height: 290px;
+  }
+}
+
+.anillo-orbita {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 2px dashed color-transparente($color-principal, 0.35);
+  border-radius: 50%;
+  animation: girar-orbita 35s linear infinite;
+}
+
+.planeta-central {
+  @include flex-centro;
+  width: px-a-rem(230px);
+  height: px-a-rem(230px);
+  padding: px-a-rem(20px);
+  border-radius: 50%;
+  background: radial-gradient(circle, $color-superficie 0%, ajustar-tono($color-principal, 92%) 100%);
+  border: 2px solid color-transparente($color-principal, 0.25);
+  box-shadow: 0 0 40px color-transparente($color-principal, 0.15);
+  z-index: 2;
+}
+
+.satelite {
+  position: absolute;
+  @include flex-centro;
+  width: px-a-rem(88px);
+  height: px-a-rem(54px);
+  background-color: $color-superficie;
+  border: 1px solid color-transparente($color-principal, 0.4);
+  border-radius: px-a-rem(12px);
+  font-size: px-a-rem(13px);
+  font-weight: 700;
+  color: $color-principal;
+  box-shadow: 0 6px 15px color-transparente($color-texto, 0.08);
+  z-index: 3;
+
+  small {
+    display: block;
+    font-size: px-a-rem(10px);
+    font-weight: 400;
+    color: $color-texto-sec;
+  }
+}
+
+
+@for $i from 1 through 6 {
+  .sat-#{$i} {
+    @include posicion-orbital($i, 6, math.div($tamano-orbita, 2));
+
+    @media (max-width: 576px) {
+      @include posicion-orbital($i, 6, 145px);
+    }
+  }
+}
+
+
+.tarjeta-plan {
+  @include tarjeta-superficie;
+
+  .precio-plan {
+    font-size: px-a-rem(38px);
+    font-weight: 700;
+    color: $color-principal;
+  }
+
+  .lista-ventajas {
+    list-style: none;
+    padding-left: 0;
+    text-align: left;
+
+    li {
+      padding: px-a-rem(8px) 0;
+      border-bottom: 1px solid ajustar-tono($color-borde, 30%);
+      font-size: px-a-rem(15px);
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+
+.caja-tecnologia {
+  @include tarjeta-superficie($color-superficie, $color-borde, false);
+}
+
+.caja-estadistica {
+  background-color: ajustar-tono($color-principal, 95%);
+  border: 1px solid ajustar-tono($color-principal, 82%);
+  border-radius: px-a-rem(12px);
+  padding: px-a-rem(18px);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+  }
+}
+
+
+.caja-formulario {
+  @include tarjeta-superficie($color-superficie, $color-borde, false);
+}
+
+.input-personalizado {
+  border-radius: px-a-rem(10px);
+  border: 1px solid $color-borde;
+  padding: px-a-rem(10px) px-a-rem(14px);
+
+  &:focus {
+    border-color: $color-principal;
+    box-shadow: 0 0 0 3px color-transparente($color-principal, 0.2);
+  }
+}
+
+
+.pie-pagina {
+  background-color: $color-superficie;
+  border-top: 1px solid $color-borde;
+
+  a {
+    color: $color-texto-sec;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+      color: $color-principal;
+    }
+  }
+}
+
+@keyframes girar-orbita {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
